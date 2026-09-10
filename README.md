@@ -1,7 +1,11 @@
-# Buttholwink Mythic+ Dashboard
-A separate Arms Warrior / Slayer dashboard for Buttholwink on US-Illidan.
+# Yaden Mythic+ Dashboard
 
-- Raider.IO profile: Buttholwink / Illidan / US
-- Arms Warrior styling and rotation reference
-- Same dashboard, BiS, farm, Great Vault, M+ and live gear components as the Wr3n app
-- Dark steel / ember visual theme
+Separate dark-purple Arms Warrior dashboard for Yaden's character **Buttholwink** on **US-Illidan**.
+
+- Raider.IO character: Buttholwink
+- Region: US
+- Realm: Illidan
+- Spec: Arms Warrior
+- Slayer-focused rotation reference
+- Dark purple / black visual theme
+- Same core dashboard, live Raider.IO sync, BiS, farming, Great Vault, Mythic+ and rotation components
