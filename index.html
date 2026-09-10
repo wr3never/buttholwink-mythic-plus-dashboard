@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F8F5F4">
+<title>Buttholwink Arms Warrior — Mythic+ Command Center</title>
+<style>
+:root{
+ --bg:#050a11;--p:#0d1725;--p2:#101e31;--line:#263c59;--text:#edf8ff;--muted:#90a7bf;
+ --ice:#78ddff;--ice2:#d0f6ff;--good:#61dfa0;--warn:#ffd36a;--bad:#ff7385;--vio:#a98cff
+}
+*{box-sizing:border-box} html{background:var(--bg)} body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+background:radial-gradient(circle at 8% 0%,rgba(120,221,255,.12),transparent 27%),radial-gradient(circle at 90% 10%,rgba(169,140,255,.08),transparent 25%),var(--bg)}
+button,input,select{font:inherit}.app{max-width:1180px;margin:auto;padding:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(26px,4vw,42px);letter-spacing:-1px}.sub{color:var(--muted);margin-top:4px;font-size:13px}
+.badge{display:inline-block;font-size:10px;letter-spacing:.08em;padding:5px 8px;border:1px solid #376077;border-radius:999px;color:var(--ice2);vertical-align:middle}
+.btn{border:1px solid var(--line);background:#111d2e;color:var(--text);padding:10px 13px;border-radius:10px;font-weight:850;cursor:pointer}
+.btn:hover{border-color:var(--ice)}.btn.primary{background:linear-gradient(135deg,#153a58,#245a79);border-color:#4182a5}
+.tabs{display:flex;gap:8px;overflow:auto;margin:17px 0}.tabbtn{white-space:nowrap}.tabbtn.active{border-color:var(--ice);color:var(--ice2);box-shadow:0 0 0 2px rgba(120,221,255,.07) inset}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;gap:13px}.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:1.25fr .75fr}
+.card{background:linear-gradient(180deg,rgba(16,30,49,.97),rgba(10,17,29,.98));border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.small,label.small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.val{font-size:30px;font-weight:950;margin-top:5px}
+.ice{color:var(--ice)}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+h2{font-size:17px;margin:0 0 10px}h3{font-size:14px;margin:0 0 6px}.note{font-size:12px;color:var(--muted);margin:-4px 0 11px}
+.progress{height:9px;border-radius:999px;background:#07101b;border:1px solid #20344d;overflow:hidden;margin-top:9px}.progress>div{height:100%;background:linear-gradient(90deg,var(--ice),var(--vio))}
+table{width:100%;border-collapse:collapse}th,td{padding:8px 6px;border-bottom:1px solid rgba(38,60,89,.75);font-size:13px;text-align:left}th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+input,select{width:100%;background:#08111d;color:var(--text);border:1px solid #2a4260;border-radius:9px;padding:8px;outline:none}input:focus,select:focus{border-color:var(--ice)}
+.vaults{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.vault{padding:11px;border:1px solid var(--line);border-radius:11px;background:#081321}.vault.done{border-color:#2e8462;background:#0a2119}
+.pill{display:inline-block;padding:4px 7px;border-radius:999px;background:#092035;border:1px solid #2d5d79;color:#c6f3ff;font-size:11px}
+.rioBar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:14px 0 0}
+.rioStatus{display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid var(--line);border-radius:999px;background:#081321;color:var(--muted);font-size:11px}
+.rioDot{width:8px;height:8px;border-radius:50%;background:#64748b}.rioStatus.live .rioDot{background:var(--good);box-shadow:0 0 8px rgba(97,223,160,.5)}.rioStatus.err .rioDot{background:var(--bad)}
+.nextKey{background:radial-gradient(circle at 100% 0,rgba(120,221,255,.17),transparent 42%),linear-gradient(180deg,#102338,#08131f);border-color:#356887}
+.nextKeyMain{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.nextKeyDungeon{font-size:25px;font-weight:950;color:var(--ice2);letter-spacing:-.5px}
+.nextKeyLevel{font-size:42px;font-weight:1000;color:var(--ice);line-height:1}
+.recReason{margin-top:7px;color:var(--muted);font-size:12px;max-width:680px}
+.rioMeta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.rioMeta>div{background:#07101b;border:1px solid var(--line);padding:9px;border-radius:10px}.rioMeta b{display:block;font-size:16px;margin-top:2px}
+@media(max-width:650px){.rioMeta{grid-template-columns:1fr 1fr}}.run{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(38,60,89,.7)}
+.gear{display:grid;grid-template-columns:1fr 1.3fr 40px;gap:7px;margin-bottom:7px}.iconbtn{width:38px;height:38px;border:1px solid var(--line);border-radius:9px;background:#111d2e;color:var(--bad);cursor:pointer}
+.check{display:flex;align-items:center;gap:8px;margin:9px 0}.check input{width:auto}.footer{text-align:center;color:var(--muted);font-size:11px;padding:18px 0}
+
+/* trainer */
+.trainerHead{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
+.arena{background:radial-gradient(circle at 50% 12%,rgba(120,221,255,.13),transparent 23%),linear-gradient(180deg,#0d1929,#07101b);border:1px solid #2d4868;border-radius:18px;padding:15px;min-height:520px}
+.scoreline{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.scorebox{text-align:center;background:#081321;border:1px solid var(--line);border-radius:10px;padding:8px}.scorebox b{display:block;font-size:20px}
+.enemy{text-align:center;margin:14px 0 11px}.enemyIcon{font-size:54px;filter:drop-shadow(0 0 14px rgba(120,221,255,.18))}.enemyName{font-weight:950;font-size:18px}.scenario{font-size:12px;color:var(--muted);margin-top:4px}
+.resources{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.resource{text-align:center;background:#081321;border:1px solid var(--line);border-radius:10px;padding:8px}.resource b{display:block;font-size:17px;margin-top:2px}
+.procs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;min-height:31px;margin:10px 0}.proc{font-size:10px;font-weight:900;padding:6px 8px;border-radius:999px;border:1px solid #455b77;background:#132139}.proc.km{border-color:#6edcff;color:#c8f5ff}.proc.rime{border-color:#9aa8ff;color:#e1e4ff}.proc.ex{border-color:#ff9a7b;color:#ffd6cb}
+.abilities{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.ability{position:relative;min-height:74px;border:1px solid #304966;border-radius:12px;background:linear-gradient(180deg,#14243a,#0b1626);color:#fff;padding:8px 5px;font-weight:850;cursor:pointer}
+.ability:hover{border-color:var(--ice);transform:translateY(-1px)}.ability .ico{font-size:22px;display:block}.ability .key{position:absolute;top:5px;right:6px;color:var(--muted);font-size:9px}.ability.cooldown{opacity:.42}.ability.recommended{box-shadow:0 0 0 2px rgba(120,221,255,.15) inset}
+.feedback{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:11px;background:#07101b;min-height:74px}.feedback.correct{border-color:#31845f}.feedback.wrong{border-color:#964351}
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lesson{background:#081321;border:1px solid var(--line);border-radius:11px;padding:10px}
+.priority{counter-reset:p}.priority div{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(38,60,89,.55)}.priority div:before{counter-increment:p;content:counter(p);display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:#10263b;border:1px solid #2e5873;color:var(--ice2);font-size:10px;font-weight:900}
+.kbd{padding:2px 5px;border:1px solid #3c506a;border-bottom-width:2px;border-radius:5px;background:#111d2e;color:#d9f4ff;font-size:10px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.72);z-index:20}.modal.open{display:flex}.modalbox{width:100%;max-width:520px;background:#0d1725;border:1px solid var(--line);border-radius:15px;padding:16px}.modalgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.trainerHead{grid-template-columns:1fr 1fr}.abilities{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.app{padding:10px}.val{font-size:25px}.trainerHead,.learn{grid-template-columns:1fr 1fr}.abilities{grid-template-columns:repeat(2,1fr)}.resources{grid-template-columns:repeat(3,1fr)}.modalgrid{grid-template-columns:1fr}.vaults{grid-template-columns:1fr 1fr 1fr}}
+
+
+/* ===== WR3N BERRY / APPLE-STYLE REDESIGN ===== */
+:root{
+ --bg:#f8f5f4;
+ --p:#fffdfc;
+ --p2:#f4eeec;
+ --line:#e8dedb;
+ --text:#2f2b2d;
+ --muted:#7f7479;
+ --ice:#d893a4;
+ --ice2:#8a5361;
+ --good:#648f74;
+ --warn:#ce8127;
+ --bad:#b45668;
+ --vio:#d8bfce;
+ --berry-salmon:#e5a38f;
+ --berry-lavender:#d8bfce;
+ --berry-cream:#eddfd9;
+ --berry-orange:#ce8127;
+ --berry-rose:#d893a4;
+ --shadow:0 10px 30px rgba(91,65,72,.08);
+}
+html{background:var(--bg)}
+body{
+ color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",Arial,sans-serif;
+ background:
+   radial-gradient(circle at 5% 0%,rgba(229,163,143,.23),transparent 30%),
+   radial-gradient(circle at 96% 4%,rgba(216,147,164,.18),transparent 32%),
+   linear-gradient(180deg,#fcf9f8 0%,#f7f2f1 100%);
+ letter-spacing:-.01em;
+ min-height:100vh;
+}
+.app{max-width:1280px;padding:24px 24px 36px}
+.top{padding:4px 2px 2px}
+h1{font-size:clamp(29px,4vw,46px);font-weight:650;letter-spacing:-.045em;color:#211f20}
+.sub{color:var(--muted);font-size:13px;font-weight:450;letter-spacing:0}
+.badge{border:0;background:rgba(216,147,164,.18);color:#8b5361;font-weight:700;letter-spacing:.09em;padding:6px 9px}
+.btn{
+ border:1px solid rgba(89,69,75,.11);
+ background:rgba(255,255,255,.76);
+ color:#433b3e;
+ border-radius:13px;
+ padding:10px 14px;
+ font-weight:620;
+ box-shadow:0 2px 8px rgba(70,50,56,.04);
+ backdrop-filter:blur(14px);
+ transition:.18s ease;
+}
+.btn:hover{border-color:rgba(216,147,164,.55);transform:translateY(-1px);box-shadow:0 8px 18px rgba(99,68,78,.08)}
+.btn.primary{background:linear-gradient(135deg,#d893a4,#c67f92);border-color:transparent;color:white;box-shadow:0 8px 20px rgba(216,147,164,.22)}
+.tabs{gap:7px;margin:18px 0 20px;padding:5px;background:rgba(255,255,255,.56);border:1px solid rgba(89,69,75,.08);border-radius:17px;width:max-content;max-width:100%;box-shadow:0 4px 18px rgba(75,54,60,.04)}
+.tabbtn{background:transparent;border-color:transparent;box-shadow:none;color:#6c6166}
+.tabbtn.active{background:#fff;border-color:rgba(89,69,75,.08);color:#6d3e49;box-shadow:0 4px 14px rgba(78,56,63,.08)}
+.card{background:rgba(255,253,252,.91);border:1px solid rgba(99,72,80,.09);border-radius:22px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+.small,label.small{font-size:10px;color:#92858a;font-weight:680;letter-spacing:.105em}
+.val{font-size:34px;font-weight:680;letter-spacing:-.045em;color:#332e30}.ice{color:#a95f73}.good{color:var(--good)}.warn{color:#b56e20}.bad{color:var(--bad)}
+h2{font-size:18px;font-weight:670;letter-spacing:-.025em}h3{font-size:14px;font-weight:660}.note{color:#8b7e83;font-size:12px;line-height:1.45}
+.progress{height:8px;background:#efe7e4;border:0;border-radius:999px}.progress>div{background:linear-gradient(90deg,#e5a38f,#d893a4)}
+table{overflow:hidden;border-radius:14px}th,td{border-bottom:1px solid #efe7e4;padding:10px 8px}th{color:#95888d;font-weight:690}
+input,select{background:#fbf7f5;color:#332f31;border:1px solid #e6dad7;border-radius:12px;padding:9px 10px}input:focus,select:focus{border-color:#d893a4;box-shadow:0 0 0 3px rgba(216,147,164,.12)}
+.vault{border:1px solid #eadfdb;background:#fbf7f5;border-radius:15px}.vault.done{border-color:#bdcfbf;background:#f0f6f1}
+.pill{background:#f7e7eb;border:1px solid #ecd1d8;color:#925568;border-radius:999px}
+.rioBar{margin-top:16px}.rioStatus{border:1px solid #eadfdb;background:rgba(255,255,255,.7);color:#83777c}
+.rioStatus.live .rioDot{background:#6e9b7d;box-shadow:0 0 8px rgba(100,143,116,.35)}
+.nextKey{background:linear-gradient(135deg,rgba(216,191,206,.58),rgba(237,223,217,.74) 50%,rgba(229,163,143,.35));border-color:rgba(129,86,98,.08)}
+.nextKeyDungeon{color:#5f414a;font-size:27px;font-weight:680;letter-spacing:-.035em}.nextKeyLevel{color:#aa6476;font-weight:720;letter-spacing:-.05em}.recReason{color:#75696d;line-height:1.45}
+.rioMeta>div{background:rgba(255,255,255,.66);border:1px solid rgba(112,80,89,.08);border-radius:14px}.rioMeta b{font-weight:680;color:#463d40}
+.stats .card:nth-child(1){background:linear-gradient(145deg,#f7d7cd,#f3c9bc)}
+.stats .card:nth-child(2){background:linear-gradient(145deg,#eadce5,#ddc7d5)}
+.stats .card:nth-child(3){background:linear-gradient(145deg,#f8f1ed,#efe3dd)}
+.stats .card:nth-child(4){background:linear-gradient(145deg,#e0a14c,#ce8127);color:white}
+.stats .card:nth-child(4) .small,.stats .card:nth-child(4) .note,.stats .card:nth-child(4) .warn{color:white}
+.run{border-bottom:1px solid #eee4e1}.gear{gap:8px}.iconbtn{background:#fbf4f5;border:1px solid #ead8dd;color:#aa5f70;border-radius:11px}.footer{color:#97898e}
+.arena{background:linear-gradient(180deg,#fffaf8,#f5ece9);border:1px solid #e6d9d5;border-radius:22px;box-shadow:var(--shadow)}
+.scorebox,.resource,.lesson{background:rgba(255,255,255,.7);border:1px solid #eadfdb;border-radius:14px}.enemyIcon{filter:none}.scenario{color:#82767a}.proc{background:#f7f0f2;border-color:#e5d5da;color:#6d5960}.proc.km{border-color:#e4b2c0;color:#8d5364}.proc.rime{border-color:#d7c3d6;color:#735e73}.proc.ex{border-color:#ebc1b4;color:#8d5f51}
+.ability{background:linear-gradient(180deg,#fff,#f7efec);color:#3a3336;border:1px solid #e5d9d5;border-radius:15px;box-shadow:0 5px 14px rgba(78,54,61,.05)}.ability:hover{border-color:#d893a4}.ability.recommended{box-shadow:0 0 0 3px rgba(216,147,164,.14) inset}.feedback{background:#fff9f7;border:1px solid #eadfdb;border-radius:15px}.feedback.correct{border-color:#afcab6;background:#f4f9f5}.feedback.wrong{border-color:#dfb2bc;background:#fff5f6}
+.priority div{border-bottom:1px solid #eee5e2}.priority div:before{background:#f6e5ea;border:0;color:#98596b}.kbd{background:#f5eeec;color:#554b4f;border-color:#ddcfcb}
+.modal{background:rgba(55,43,47,.34);backdrop-filter:blur(8px)}.modalbox{background:#fffaf8;border:1px solid #eadfdb;border-radius:22px;box-shadow:0 30px 70px rgba(54,37,43,.18)}
+/* BiS table accents */
+#bis .card:first-child{background:linear-gradient(135deg,rgba(216,191,206,.55),rgba(255,253,252,.95))}
+#bis table tbody tr:hover{background:rgba(216,147,164,.055)}
+#bis .pill{font-weight:650}
+@media(max-width:850px){.app{padding:16px}.tabs{width:100%}.tabbtn{flex:1}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.app{padding:10px}.card{border-radius:18px;padding:14px}.tabs{border-radius:14px}.tabbtn{flex:none}.val{font-size:29px}}
+
+
+/* ===== WR3N APP LAYOUT V2 ===== */
+:root{--sidebar:230px}
+body{overflow-x:hidden}
+.shellSidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);padding:26px 16px 22px;background:rgba(255,251,249,.86);backdrop-filter:blur(22px);border-right:1px solid rgba(109,83,91,.10);z-index:12;display:flex;flex-direction:column}
+.brandLock{padding:4px 10px 24px}.brandTitle{font-size:34px;font-weight:650;letter-spacing:-.055em;color:#201d1f}.brandTag{margin-top:5px;font-size:9px;letter-spacing:.20em;text-transform:uppercase;color:#8e7f84;font-weight:700}
+.sideNav{display:grid;gap:6px}.sideNav .tabbtn{width:100%;border:0;box-shadow:none;text-align:left;display:flex;align-items:center;gap:10px;background:transparent;color:#544a4e;border-radius:14px;padding:12px 13px;font-size:14px}.sideNav .tabbtn:hover{background:rgba(216,147,164,.10)}.sideNav .tabbtn.active{background:linear-gradient(135deg,rgba(229,163,143,.22),rgba(216,147,164,.20));color:#8c3f55;border:0;box-shadow:none}.navIcon{width:23px;text-align:center;font-size:17px}
+.sideFoot{margin-top:auto;padding:14px 10px 0;border-top:1px solid rgba(109,83,91,.09)}.sideQuote{font-size:12px;line-height:1.5;color:#8e7f84;font-style:italic}.sideMini{font-size:10px;color:#a39398;margin-top:10px}
+.app{max-width:none;margin:0 0 0 var(--sidebar);padding:24px 28px 42px;min-height:100vh}.tabs{display:none}.top{padding:0 0 14px}.top h1{font-size:26px}.rioBar{margin:0 0 18px;padding:10px 0 2px}
+.hero{position:relative;overflow:hidden;min-height:172px;border-radius:24px;padding:28px 30px;margin-bottom:14px;background:linear-gradient(118deg,rgba(80,53,66,.92),rgba(175,107,126,.70) 42%,rgba(206,129,39,.58)),radial-gradient(circle at 72% 15%,rgba(255,255,255,.26),transparent 30%);box-shadow:0 18px 45px rgba(96,58,72,.14);color:white}.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;filter:blur(2px);background:rgba(255,255,255,.10)}.hero:before{width:360px;height:360px;right:-90px;top:-190px}.hero:after{width:170px;height:170px;right:190px;bottom:-120px}.heroKicker{font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;opacity:.78}.heroTitle{font-size:clamp(40px,6vw,72px);font-weight:520;letter-spacing:-.06em;line-height:.95;margin-top:10px}.heroSub{font-size:15px;margin-top:12px;max-width:610px;opacity:.86;line-height:1.5}.heroMeta{position:absolute;right:25px;bottom:22px;text-align:right;font-size:10px;letter-spacing:.19em;text-transform:uppercase;line-height:1.8;opacity:.82}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stats .card{min-height:132px;display:flex;flex-direction:column;justify-content:center}.stats .card:nth-child(1){background:linear-gradient(145deg,rgba(229,163,143,.45),#fffdfc)}.stats .card:nth-child(2){background:linear-gradient(145deg,rgba(216,191,206,.55),#fffdfc)}.stats .card:nth-child(3){background:linear-gradient(145deg,rgba(237,223,217,.88),#fffdfc)}.stats .card:nth-child(4){background:linear-gradient(145deg,rgba(206,129,39,.24),#fffdfc)}
+.dashboardGrid{display:grid;grid-template-columns:1.05fr .95fr;gap:13px;margin-top:13px}.featureCard{min-height:220px}.featureHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.textLink{border:0;background:transparent;color:#9c6876;cursor:pointer;font-size:12px;font-weight:650;padding:0}.sectionTitle{font-size:21px;font-weight:650;letter-spacing:-.025em;margin:0}
+.farmHero{background:linear-gradient(145deg,rgba(216,191,206,.65),rgba(255,253,252,.97));border:1px solid rgba(137,100,111,.10)}.farmGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:13px}.farmTarget{padding:15px;border-radius:18px;background:#fffaf8;border:1px solid #eee4e1}.farmRank{width:29px;height:29px;display:grid;place-items:center;border-radius:999px;background:#f7dce3;color:#a14f67;font-weight:800;font-size:12px;margin-bottom:11px}.farmTarget h3{font-size:15px;margin:0 0 5px}.farmTarget .note{margin:0}.sourceTag{display:inline-flex;margin-top:10px;border-radius:999px;padding:5px 8px;background:rgba(206,129,39,.11);color:#9d621e;font-size:10px;font-weight:700}.farmTable td:first-child{font-weight:700}.farmTable tr:hover{background:rgba(216,147,164,.055)}
+@media(max-width:1020px){:root{--sidebar:190px}.stats{grid-template-columns:repeat(2,1fr)}.farmGrid{grid-template-columns:1fr 1fr}.heroMeta{display:none}}
+@media(max-width:760px){.shellSidebar{position:sticky;top:0;width:100%;height:auto;display:block;padding:9px 10px;overflow:auto}.brandLock,.sideFoot{display:none}.sideNav{display:flex;gap:6px;overflow:auto}.sideNav .tabbtn{width:auto;white-space:nowrap;padding:9px 11px}.app{margin-left:0;padding:14px}.top{margin-top:4px}.hero{min-height:150px;padding:22px}.heroTitle{font-size:44px}.dashboardGrid,.farmGrid{grid-template-columns:1fr}}
+
+/* ===== DARKER BERRY READABILITY PASS ===== */
+:root{
+ --bg:#2f2228;
+ --p:#3b2a31;
+ --p2:#463039;
+ --line:#6b4a56;
+ --text:#fff7f8;
+ --muted:#d9c4ca;
+ --ice:#e7a3b3;
+ --ice2:#ffd9e1;
+ --good:#9fd0ad;
+ --warn:#e39a45;
+ --bad:#f08a9f;
+ --vio:#b993ad;
+ --shadow:0 12px 34px rgba(20,10,14,.28);
+}
+html{background:var(--bg)}
+body{
+ color:var(--text);
+ background:
+   radial-gradient(circle at 5% 0%,rgba(181,92,112,.18),transparent 30%),
+   radial-gradient(circle at 96% 4%,rgba(126,77,106,.20),transparent 34%),
+   linear-gradient(180deg,#3a2931 0%,#2f2228 100%);
+}
+.shellSidebar{background:rgba(47,34,40,.94);border-right:1px solid rgba(255,220,228,.09)}
+.brandTitle{color:#fff8fa}.brandTag,.sideQuote,.sideMini{color:#d5bdc5}
+.sideFoot{border-top-color:rgba(255,220,228,.08)}
+.sideNav .tabbtn{color:#eadde1}.sideNav .tabbtn:hover{background:rgba(216,147,164,.12)}
+.sideNav .tabbtn.active{background:linear-gradient(135deg,rgba(183,90,111,.34),rgba(132,84,111,.34));color:#fff3f6}
+.top h1{color:#fff8fa}.sub{color:#d5c3c9}.badge{background:rgba(216,147,164,.18);color:#ffe5eb}
+.btn{background:rgba(73,50,59,.88);border-color:rgba(255,218,226,.10);color:#fff7f8}
+.btn:hover{border-color:#e7a3b3}.btn.primary{background:linear-gradient(135deg,#9f5365,#7a4969);border-color:#b9778b}
+.rioStatus{background:#3a2931;color:#ddcbd0;border-color:#6a4a55}
+.hero{background:linear-gradient(118deg,rgba(74,43,56,.97),rgba(128,67,88,.86) 44%,rgba(166,95,48,.72)),radial-gradient(circle at 72% 15%,rgba(255,255,255,.10),transparent 30%)}
+.card{background:linear-gradient(180deg,rgba(67,46,55,.96),rgba(53,37,44,.98));border-color:#674955;box-shadow:var(--shadow)}
+.small,label.small,.note,.scenario,.recReason{color:#d9c4ca}
+.nextKey{background:radial-gradient(circle at 100% 0,rgba(216,147,164,.15),transparent 42%),linear-gradient(180deg,#513442,#392831);border-color:#795463}
+.nextKeyDungeon{color:#ffe3e9}.nextKeyLevel{color:#f0afbd}
+.rioMeta>div{background:#35262d;border-color:#624550}
+.progress{background:#2d2026;border-color:#5b424c}.progress>div{background:linear-gradient(90deg,#e5a38f,#d893a4,#b993ad)}
+table th,table td{border-bottom-color:rgba(255,223,231,.10)} th{color:#d9c4ca}
+input,select{background:#34242b;color:#fff8fa;border-color:#674955}input:focus,select:focus{border-color:#e7a3b3}
+.vault,.scorebox,.resource,.lesson,.feedback,.farmTarget{background:#38272f;border-color:#654853}
+.vault.done{background:#2d4235;border-color:#5f8d6c}
+.pill,.sourceTag{background:rgba(206,129,39,.17);border-color:rgba(227,154,69,.28);color:#ffd5a5}
+.iconbtn{background:#442d36;border-color:#6c4a56;color:#f08a9f}
+.arena{background:linear-gradient(180deg,#432d36,#302229);border-color:#684a55}
+.proc{background:#49313b;border-color:#6f4f5b;color:#f0dce2}.proc.km{border-color:#c47d90;color:#ffe8ed}.proc.rime{border-color:#9d7893;color:#ead7e6}.proc.ex{border-color:#c8816d;color:#ffe0d6}
+.ability{background:linear-gradient(180deg,#4a323c,#35252c);color:#fff;border-color:#694b56}.ability:hover{border-color:#e7a3b3}.feedback.correct{background:#314338}.feedback.wrong{background:#4b2d35}
+.priority div{border-bottom-color:rgba(255,223,231,.10)}.priority div:before{background:#653f4d;color:#ffe5eb}.kbd{background:#4a343c;color:#fff2f5;border-color:#745560}
+.modalbox{background:#3c2a32;border-color:#6b4a56}.modal{background:rgba(20,10,14,.58)}
+.stats .card:nth-child(1){background:linear-gradient(145deg,#8d5260,#5b3944)}
+.stats .card:nth-child(2){background:linear-gradient(145deg,#73536f,#4e3a4b)}
+.stats .card:nth-child(3){background:linear-gradient(145deg,#725c59,#4b3b3b)}
+.stats .card:nth-child(4){background:linear-gradient(145deg,#a2642b,#6c4324)}
+.stats .card .small,.stats .card .note,.stats .card .val{color:#fff8fa !important}
+#bis .card:first-child,.farmHero{background:linear-gradient(145deg,#594052,#3e2d36)}
+#bis table tbody tr:hover,.farmTable tr:hover{background:rgba(216,147,164,.07)}
+.yadenCard{min-height:55vh;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 50% 35%,rgba(216,147,164,.22),transparent 34%),linear-gradient(145deg,#5a3d49,#37272e)}
+.yadenMsg{font-size:clamp(54px,10vw,120px);font-weight:750;letter-spacing:-.06em;color:#fff6f8;text-shadow:0 12px 35px rgba(0,0,0,.22)}
+.yadenHeart{font-size:clamp(32px,6vw,72px);margin-bottom:10px;color:#f0a4b6}
+
+</style>
+
+<style id="jaden-theme">
+:root{
+ --bg:#0b1017!important;--panel:#151c26!important;--panel2:#1b2531!important;
+ --text:#f3f6f9!important;--muted:#98a6b8!important;--line:#2c3948!important;
+ --salmon:#b85c42!important;--lavender:#3d536d!important;--cream:#d8d1c7!important;
+ --amber:#c67a22!important;--berry:#8f3d4b!important;--berryDeep:#542630!important;
+ --ink:#f3f6f9!important;--white:#151c26!important;
+}
+body{background:radial-gradient(circle at 85% 5%,#26374a 0,transparent 34%),linear-gradient(145deg,#080c12,#111923 55%,#0a0e14)!important;color:var(--text)!important}
+.sidebar{background:linear-gradient(180deg,#111923,#0a0f16)!important;border-color:#293544!important}
+.brandMark,.hero h1{letter-spacing:-.04em}.navbtn.active{background:linear-gradient(135deg,#8f3d4b,#542630)!important;color:white!important}
+.card,.hero,.sideCard,.arena,.modalbox{background:linear-gradient(145deg,rgba(28,38,51,.96),rgba(16,23,32,.98))!important;border-color:#344354!important;box-shadow:0 16px 40px rgba(0,0,0,.24)!important}
+.hero{background:linear-gradient(115deg,#111a25 0%,#263a4e 55%,#5b3028 100%)!important}
+.btn.primary{background:linear-gradient(135deg,#b85c42,#8f3d4b)!important;color:#fff!important}
+.stat:nth-child(1){background:linear-gradient(145deg,#45262b,#221a20)!important}
+.stat:nth-child(2){background:linear-gradient(145deg,#26394c,#19232f)!important}
+.stat:nth-child(3){background:linear-gradient(145deg,#323b46,#1d252e)!important}
+.stat:nth-child(4){background:linear-gradient(145deg,#7a4719,#3c2918)!important}
+.small,.note,.sub,.recReason{color:#aeb9c6!important}
+input,select,textarea{background:#0d141d!important;color:#f4f6f8!important;border-color:#344354!important}
+table th{color:#aeb9c6!important} table td{border-color:#2b3745!important}
+</style>
+</head>
+<body>
+<aside class="shellSidebar">
+ <div class="brandLock"><div class="brandTitle">Buttholwink</div><div class="brandTag">Play • Improve • Repeat</div></div>
+ <nav class="sideNav">
+  <button class="btn tabbtn active" onclick="tab('dash',this)"><span class="navIcon">⌂</span>Overview</button>
+  <button class="btn tabbtn" onclick="tab('bis',this)"><span class="navIcon">◇</span>Best in Slot</button>
+  <button class="btn tabbtn" onclick="tab('farm',this)"><span class="navIcon">✦</span>What to Farm</button>
+  <button class="btn tabbtn" onclick="tab('train',this)"><span class="navIcon">⚔</span>Rotation Trainer</button>
+  <button class="btn tabbtn" onclick="tab('yaden',this)"><span class="navIcon">♡</span>Yaden</button>
+ </nav>
+ <div class="sideFoot"><div class="sideQuote">Good players chase gear. Better players chase better decisions.</div><div class="sideMini">Buttholwink Mythic+ • Arms Warrior</div></div>
+</aside>
+<div class="app">
+ <div class="top">
+  <div><h1>❄ <span id="nm">Buttholwink</span> Mythic+ <span class="badge">ARMS WARRIOR</span></h1><div class="sub" id="sub">Illidan • Arms Warrior • Midnight Season 2</div></div>
+  <button class="btn" onclick="openSettings()">⚙ Character</button>
+ </div>
+ <div class="rioBar">
+   <button class="btn primary" id="rioRefresh" onclick="refreshRaiderIO(true)">↻ Refresh Raider.IO</button>
+   <span class="rioStatus" id="rioStatus"><span class="rioDot"></span><span id="rioStatusText">Not synced yet</span></span>
+   <a class="btn" id="rioProfileLink" href="https://raider.io/characters/us/illidan/Buttholwink" target="_blank" rel="noopener" style="text-decoration:none">View Raider.IO ↗</a>
+ </div>
+
+ <div class="tabs">
+  <button class="btn tabbtn active" onclick="tab('dash',this)">📊 Dashboard</button>
+  <button class="btn tabbtn" onclick="tab('bis',this)">🛡 Best in Slot</button>
+  <button class="btn tabbtn" onclick="tab('train',this)">⚔ Top-DPS Rotation Trainer</button>
+  <button class="btn tabbtn" onclick="tab('yaden',this)">♡ Yaden</button>
+ </div>
+
+ <section id="dash" class="tab active">
+  <div class="hero">
+    <div class="heroKicker">Midnight Season 2 • Arms Warrior</div>
+    <div class="heroTitle">Buttholwink</div>
+    <div class="heroSub">Mythic+ command center for rating, upgrades, BiS progression and cleaner decisions before every key.</div>
+    <div class="heroMeta">Discipline creates freedom<br>Same girl • higher keys</div>
+  </div>
+
+  <div class="card nextKey" style="margin-bottom:13px">
+    <div class="small">Raider.IO Smart Recommendation</div>
+    <div class="nextKeyMain">
+      <div>
+        <div class="nextKeyDungeon" id="recDungeon">Sync Raider.IO to calculate</div>
+        <div class="recReason" id="recReason">I’ll look at the best run contributing to each dungeon and prioritize your weakest score opportunity.</div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">BEST NEXT KEY</div>
+        <div class="nextKeyLevel" id="recLevel">—</div>
+      </div>
+    </div>
+    <div class="rioMeta">
+      <div><span class="small">Live Rating</span><b id="rioRating">—</b></div>
+      <div><span class="small">Equipped iLvl</span><b id="rioIlvl">—</b></div>
+      <div><span class="small">World Rank</span><b id="rioWorldRank">—</b></div>
+      <div><span class="small">Region Rank</span><b id="rioRegionRank">—</b></div>
+    </div>
+  </div>
+  <div class="grid stats">
+   <div class="card"><div class="small">Mythic+ Rating</div><div class="val ice" id="ratingVal">2065</div><div class="progress"><div id="prog"></div></div><div class="note" id="pct" style="margin:7px 0 0"></div></div>
+   <div class="card"><div class="small">Best Timed Key</div><div class="val" id="bestKey">+10</div><div class="note" style="margin:7px 0 0">your best logged / entered run</div></div>
+   <div class="card"><div class="small">Vault Runs</div><div class="val good" id="weeklyVal">0</div><div class="note" style="margin:7px 0 0">this week</div></div>
+   <div class="card"><div class="small">Rating Goal</div><div class="val warn" id="goalVal">2500</div><div class="note" id="gap" style="margin:7px 0 0"></div></div>
+  </div>
+
+  <div class="grid two" style="margin-top:13px">
+   <div class="card"><h2>Dungeon Scoreboard</h2><div class="note">Rename these to the current dungeon pool and enter your best results.</div><div style="overflow:auto"><table><thead><tr><th>Dungeon</th><th>Best</th><th>Score</th><th>Target</th><th>Gap</th></tr></thead><tbody id="dungeons"></tbody></table></div></div>
+   <div class="card"><h2>Great Vault</h2><div class="note">1 / 4 / 8 Mythic+ run thresholds.</div><div class="vaults">
+    <div class="vault" id="v1"><div class="small">Slot 1</div><b>1 run</b><div id="v1t">Incomplete</div></div>
+    <div class="vault" id="v4"><div class="small">Slot 2</div><b>4 runs</b><div id="v4t">Incomplete</div></div>
+    <div class="vault" id="v8"><div class="small">Slot 3</div><b>8 runs</b><div id="v8t">Incomplete</div></div>
+   </div><div style="margin-top:11px"><label class="small">Runs this week</label><input id="weekly" type="number" min="0" value="0" oninput="weeklyChange()"></div><button class="btn primary" style="width:100%;margin-top:9px" onclick="openRun()">+ Log Run</button></div>
+  </div>
+
+  <div class="grid two" style="margin-top:13px">
+   <div class="card"><h2>Recent Runs</h2><div id="runs"></div><div class="note" id="noruns">No runs logged yet.</div></div>
+   <div class="card"><h2>Push Goals</h2><label class="small">Rating goal <span class="pill" id="gp"></span></label><input id="goal" type="range" min="2000" max="3500" step="50" oninput="goalChange()"><div style="height:10px"></div><label class="small">Key goal <span class="pill" id="kg"></span></label><input id="keyGoal" type="range" min="5" max="20" oninput="goalChange()"></div>
+  </div>
+
+  <div class="grid two" style="margin-top:13px">
+   <div class="card"><h2>Gear Upgrade Priority</h2><div id="gear"></div><button class="btn" onclick="addGear()">+ Add Item</button></div>
+   <div class="card"><h2>Key Prep</h2>
+    <label class="check"><input type="checkbox" data-c="ench" onchange="checkSave()"> Weapon runeforges ready</label>
+    <label class="check"><input type="checkbox" data-c="con" onchange="checkSave()"> Food / flask / pots ready</label>
+    <label class="check"><input type="checkbox" data-c="int" onchange="checkSave()"> Mind Freeze / stops bound</label>
+    <label class="check"><input type="checkbox" data-c="route" onchange="checkSave()"> Route reviewed</label>
+    <label class="check"><input type="checkbox" data-c="gear" onchange="checkSave()"> New gear compared / simmed</label>
+   </div>
+  </div>
+ </section>
+
+ <section id="bis" class="tab"><div class="card nextKey" style="margin-bottom:13px"><div class="small">MIDNIGHT SEASON 2 • FROST DEATH KNIGHT</div><div class="nextKeyMain"><div><div class="nextKeyDungeon">Best in Slot Tracker</div><div class="recReason">Track the pieces you own and use the farm priority below to decide what to chase next. BiS is a target list, not a substitute for simming your exact character.</div></div><div style="text-align:right"><div class="small">COLLECTED</div><div class="nextKeyLevel" id="bisCount">0/16</div></div></div></div><div class="grid two"><div class="card"><h2>What should I farm next?</h2><div id="bisNext"></div><div class="note" style="margin-top:10px">High-impact special-effect pieces are prioritized first. Sim before spending major upgrade currency.</div></div><div class="card"><h2>Priority Targets</h2><div class="run"><b>1. Weapons</b><span>Aman'muso + Jaw</span></div><div class="run"><b>2. Trinkets</b><span>Ula'tek + Zul'jin</span></div><div class="run"><b>3. Neck</b><span>Aqirbane Reliquary</span></div><div class="run"><b>4. Tier</b><span>Complete/optimize 4-set</span></div></div></div><div class="card" style="margin-top:13px"><h2>Overall BiS Checklist</h2><div class="note">Patch 12.1 overall high-DPS target list. Refresh Raider.IO to pull your equipped gear automatically; exact BiS matches are checked for you. Manually check pieces you own in bags or bank.</div><div style="overflow:auto;margin-top:10px"><table><thead><tr><th>Have</th><th>Slot</th><th>Live Equipped</th><th>Best in Slot</th><th>Status</th><th>Source</th><th>Notes</th></tr></thead><tbody id="bisTable"></tbody></table></div></div><div class="card" style="margin-top:13px"><h2>Best Mythic+ Farms</h2><div class="run"><b>Temple of Sethraliss</b><span>Weapon + strong tier-conversion bases</span></div><div class="run"><b>Altar of Fangs</b><span>BiS ring</span></div><div class="run"><b>Voidscar Arena</b><span>Strong ring/neck/helm options</span></div><div class="run"><b>King's Rest</b><span>Strong waist + boots</span></div></div></section>
+
+
+ <section id="farm" class="tab">
+  <div class="card farmHero">
+   <div class="small">SMART UPGRADE PATH</div>
+   <div class="nextKeyMain">
+    <div><div class="nextKeyDungeon">What should I farm?</div><div class="recReason">Uses your BiS checklist and live equipped gear to surface the next missing high-priority targets.</div></div>
+    <button class="btn primary" onclick="refreshRaiderIO(true)">↻ Refresh Gear</button>
+   </div>
+  </div>
+  <div class="farmGrid" id="farmTop"></div>
+  <div class="card" style="margin-top:13px">
+   <div class="featureHeader"><h2 class="sectionTitle">Full farm plan</h2><button class="textLink" onclick="tab('bis',document.querySelector('.sideNav .tabbtn:nth-child(2)'))">Open BiS tracker →</button></div>
+   <div class="note">Missing targets are ordered by your BiS priority. Equipped exact matches are automatically removed from the list after Raider.IO sync.</div>
+   <div style="overflow:auto"><table class="farmTable"><thead><tr><th>Priority</th><th>Slot</th><th>Target</th><th>Source</th><th>Why</th></tr></thead><tbody id="farmTable"></tbody></table></div>
+  </div>
+ </section>
+
+ <section id="yaden" class="tab">
+  <div class="card yadenCard">
+   <div>
+    <div class="yadenHeart">♡</div>
+    <div class="yadenMsg">ILY JADEN</div>
+   </div>
+  </div>
+ </section>
+
+ <section id="train" class="tab">
+  <div class="hero" style="margin-bottom:14px"><div><div class="eyebrow">SLAYER • ARMS WARRIOR</div><h1>Arms Rotation Trainer</h1><p>Priority practice built around Buttholwink's uploaded Slayer talent setup.</p></div><div class="heroTag">STAY ON TARGET<br>KEEP COOLDOWNS ROLLING</div></div>
+  <div class="grid two">
+   <div class="card">
+    <h2>Mythic+ Slayer Priority</h2>
+    <div class="priority">
+      <div><b>1.</b> Avatar — use aggressively with your damage window.</div>
+      <div><b>2.</b> Colossus Smash — keep it cycling; don't casually desync cooldowns.</div>
+      <div><b>3.</b> Bladestorm — major Slayer/AoE damage window.</div>
+      <div><b>4.</b> Sweeping Strikes — for cleave when multiple targets will live.</div>
+      <div><b>5.</b> Mortal Strike — core priority strike.</div>
+      <div><b>6.</b> Execute — capitalize on Sudden Death / Execute windows.</div>
+      <div><b>7.</b> Overpower — rotational setup/filler.</div>
+      <div><b>8.</b> Rend / Cleave — maintain bleed/setup as appropriate.</div>
+      <div><b>9.</b> Slam — filler when higher priorities are unavailable.</div>
+    </div>
+   </div>
+   <div class="card">
+    <h2>Uploaded Spellbook Profile</h2>
+    <div class="note">Battle Shout • Charge • Execute • Heroic Leap • Pummel • Rallying Cry • Shockwave • Spell Reflection • Storm Bolt</div>
+    <h2 style="margin-top:20px">Arms Kit</h2>
+    <div class="note">Avatar • Bladestorm • Cleave • Colossus Smash • Die by the Sword • Mortal Strike • Overpower • Rend • Sweeping Strikes</div>
+    <h2 style="margin-top:20px">Hero Tree</h2>
+    <div class="val" style="font-size:28px">Slayer</div>
+    <div class="note">Based on the talent-tree screenshot you uploaded.</div>
+   </div>
+  </div>
+ </section>
+ <div class="modal" id="runModal"><div class="modalbox"><h2>Log Mythic+ Run</h2><div class="modalgrid">
+ <div><label class="small">Dungeon</label><input id="runDungeon" placeholder="Dungeon"></div><div><label class="small">Key</label><input id="runLevel" type="number" min="2" value="10"></div>
+ <div><label class="small">Result</label><select id="runResult"><option>Timed</option><option>Depleted</option></select></div><div><label class="small">Rating after</label><input id="runRating" type="number" value="2065"></div>
+</div><div style="display:flex;gap:7px;justify-content:flex-end;margin-top:12px"><button class="btn" onclick="closeM('runModal')">Cancel</button><button class="btn primary" onclick="saveRun()">Save</button></div></div></div>
+
+<div class="modal" id="settingsModal"><div class="modalbox"><h2>Character</h2><div class="modalgrid">
+ <div><label class="small">Name</label><input id="charName"></div><div><label class="small">Realm</label><input id="realm"></div><div><label class="small">Region</label><select id="region"><option value="us">US</option><option value="eu">EU</option><option value="kr">KR</option><option value="tw">TW</option><option value="cn">CN</option></select></div><div><label class="small">Rating</label><input id="currentRating" type="number"></div><div><label class="small">Spec</label><input id="spec"></div>
+</div><div style="display:flex;gap:7px;justify-content:flex-end;margin-top:12px"><button class="btn" onclick="closeM('settingsModal')">Cancel</button><button class="btn primary" onclick="saveSettings()">Save</button></div></div></div>
+
+<script>
+const D={name:"Buttholwink",realm:"Illidan",region:"us",spec:"Arms Warrior",rating:2065,goal:2500,keyGoal:12,weekly:0,
+ d:[["Dungeon 1",10,260,12],["Dungeon 2",10,260,12],["Dungeon 3",9,245,11],["Dungeon 4",9,245,11],["Dungeon 5",8,230,10],["Dungeon 6",8,230,10],["Dungeon 7",10,260,12],["Dungeon 8",9,245,11]],
+ runs:[],gear:[{i:"Weapon",n:"Highest-impact slot"},{i:"Trinket",n:"Compare before replacing"},{i:"Tier / Set",n:"Protect set bonus"}],checks:{},trainer:{score:0,streak:0,best:0,correct:0,total:0}};
+let S=JSON.parse(localStorage.getItem("wr3nFrostDash")||"null")||D;
+if(!S.trainer)S.trainer={score:0,streak:0,best:0,correct:0,total:0};if(!S.bis)S.bis={};
+const $=id=>document.getElementById(id);
+const E=x=>String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function save(){localStorage.setItem("wr3nFrostDash",JSON.stringify(S))}
+function tab(id,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");b.classList.add("active");if(id==="train")nextScenario();if(id==="bis")renderBis();if(id==="farm")renderFarm()}
+function render(){
+ $("nm").textContent=S.name;$("sub").textContent=`${S.realm} • ${S.spec} • Midnight Season 2`;$("ratingVal").textContent=S.rating;$("goalVal").textContent=S.goal;$("weeklyVal").textContent=S.weekly;
+ let gap=Math.max(0,S.goal-S.rating),pct=Math.min(100,S.rating/S.goal*100);$("prog").style.width=pct+"%";$("pct").textContent=`${pct.toFixed(1)}% to ${S.goal}`;$("gap").textContent=gap?`${gap} rating to go`:"Goal reached";
+ $("goal").value=S.goal;$("keyGoal").value=S.keyGoal;$("gp").textContent=S.goal;$("kg").textContent="+"+S.keyGoal;$("weekly").value=S.weekly;
+ let best=0;S.runs.forEach(r=>{if(r.result==="Timed")best=Math.max(best,+r.level)});if(!best)best=Math.max(...S.d.map(x=>+x[1]||0));$("bestKey").textContent="+"+best;
+ $("dungeons").innerHTML="";S.d.forEach((d,i)=>{let g=Math.max(0,(+d[3]||0)-(+d[1]||0)),tr=document.createElement("tr");tr.innerHTML=`<td><input value="${E(d[0])}" onchange="editD(${i},0,this.value)"></td><td><input type="number" value="${d[1]}" onchange="editD(${i},1,this.value)"></td><td><input type="number" value="${d[2]}" onchange="editD(${i},2,this.value)"></td><td><input type="number" value="${d[3]}" onchange="editD(${i},3,this.value)"></td><td class="${g?"warn":"good"}">${g?"+"+g:"Ready"}</td>`;$("dungeons").appendChild(tr)});
+ [1,4,8].forEach(n=>{let v=$("v"+n),t=$("v"+n+"t");if(S.weekly>=n){v.classList.add("done");t.textContent="Unlocked ✓"}else{v.classList.remove("done");t.textContent=(n-S.weekly)+" to go"}});
+ $("runs").innerHTML="";$("noruns").style.display=S.runs.length?"none":"block";S.runs.slice().reverse().slice(0,7).forEach(r=>{let x=document.createElement("div");x.className="run";x.innerHTML=`<b>${E(r.dungeon||"Mythic+")}</b><span class="pill">+${r.level}</span><span class="${r.result==="Timed"?"good":"bad"}">${r.result}</span>`;$("runs").appendChild(x)});
+ $("gear").innerHTML="";S.gear.forEach((g,i)=>{let x=document.createElement("div");x.className="gear";x.innerHTML=`<input value="${E(g.i)}" onchange="gearEdit(${i},'i',this.value)"><input value="${E(g.n)}" onchange="gearEdit(${i},'n',this.value)"><button class="iconbtn" onclick="gearDel(${i})">×</button>`;$("gear").appendChild(x)});
+ document.querySelectorAll("[data-c]").forEach(x=>x.checked=!!S.checks[x.dataset.c]);renderTrainerStats();
+ if(typeof renderRioMeta==="function") renderRioMeta();renderBis();
+}
+const BIS=[["Head","Baleful Grave-Knight's Casque","Twin Fangs","Tier"],["Neck","Aqirbane Reliquary","Ula'tek","High-priority special-effect neck"],["Shoulders","Baleful Grave-Knight's Gibbets","Catalyst • Temple of Sethraliss","Tier"],["Cloak","Silken Voodoo Drape","Coiled Altar",""] ,["Chest","Baleful Grave-Knight's Breastplate","Catalyst • Coiled Altar","Tier"],["Bracers","Spellbreaker's Bracers","Blacksmithing","Crafted • Arcanoweave Lining"],["Hands","Baleful Grave-Knight's Deathgrips","Entombed Sentinels","Tier"],["Waist","Girdle of Toxic Regret","Coiled Altar",""] ,["Legs","Baleful Grave-Knight's Greaves","Catalyst • Ula'tek","Tier"],["Feet","Spellbreaker's March","Blacksmithing","Crafted • Arcanoweave Lining"],["Ring 1","Band of the Amani Warlord","Altar of Fangs",""] ,["Ring 2","Sickening Signet of Atroxus","Voidscar Arena",""] ,["Trinket 1","Voracious Heart of Ula'tek","Ula'tek","BiS on-use • very high priority"],["Trinket 2","Zul'jin's Guillotine Technique","Coiled Altar","BiS passive • very high priority"],["Main Hand","Aman'muso, Warlord's Vengeance","Coiled Altar","Very high priority"],["Off Hand","Jaw of the Shackled Goddess","Ula'tek","Very high priority"]];const BIS_PRIORITY=[14,15,12,13,1,0,6,2,4,5,9,7,10,11,3,8];function bisSlotKey(slot){return ({"Head":"head","Neck":"neck","Shoulders":"shoulder","Cloak":"back","Chest":"chest","Bracers":"wrist","Hands":"hands","Waist":"waist","Legs":"legs","Feet":"feet","Ring 1":"finger1","Ring 2":"finger2","Trinket 1":"trinket1","Trinket 2":"trinket2","Main Hand":"mainhand","Off Hand":"offhand"})[slot]||slot.toLowerCase().replace(/\s+/g,"")}
+function equippedForSlot(slot){const g=S.rio?.equipped||{};const key=bisSlotKey(slot);return g[key]||null}
+function equippedName(item){return item?.name||item?.item?.name||item?.item_name||""}
+function equippedIlvl(item){return item?.item_level ?? item?.itemLevel ?? item?.level ?? item?.item?.item_level ?? null}
+function isAutoBis(i){const item=equippedForSlot(BIS[i][0]);return !!item && equippedName(item).trim().toLowerCase()===BIS[i][1].trim().toLowerCase()}
+function bisToggle(i){S.bis[i]=!S.bis[i];save();renderBis()}
+function renderFarm(){if(!$('farmTop')||!$('farmTable'))return;const missing=BIS_PRIORITY.filter(i=>!(S.bis[i]||isAutoBis(i)));const top=missing.slice(0,3);$('farmTop').innerHTML=top.length?top.map((i,n)=>{const x=BIS[i];return `<div class="farmTarget"><div class="farmRank">${n+1}</div><h3>${E(x[1])}</h3><div class="note"><b>${E(x[0])}</b> • ${E(x[3]||'High-value missing target')}</div><span class="sourceTag">${E(x[2])}</span></div>`}).join(''):`<div class="card" style="grid-column:1/-1"><div class="good" style="font-size:18px;font-weight:800">✓ Your tracked BiS list is complete.</div></div>`;$('farmTable').innerHTML=missing.map((i,n)=>{const x=BIS[i];return `<tr><td>#${n+1}</td><td>${E(x[0])}</td><td><b>${E(x[1])}</b></td><td>${E(x[2])}</td><td>${E(x[3]||'Missing BiS target')}</td></tr>`}).join('')||`<tr><td colspan="5" class="good"><b>All tracked targets complete.</b></td></tr>`;}
+
+function renderBis(){if(!$("bisTable"))return;let have=BIS.filter((_,i)=>S.bis[i]||isAutoBis(i)).length;$("bisCount").textContent=`${have}/${BIS.length}`;$("bisTable").innerHTML="";BIS.forEach((x,i)=>{let tr=document.createElement("tr");const item=equippedForSlot(x[0]),name=equippedName(item),ilvl=equippedIlvl(item),auto=isAutoBis(i),owned=!!S.bis[i]||auto;const live=name?`${E(name)}${ilvl?` <span class="pill">${E(ilvl)}</span>`:""}`:`<span class="small">Not synced / empty</span>`;const status=auto?`<span class="good"><b>✓ EQUIPPED BIS</b></span>`:(name?`<span class="warn">Upgrade target</span>`:`<span class="small">Unknown</span>`);tr.innerHTML=`<td><input type="checkbox" ${owned?"checked":""} ${auto?"disabled title='Detected from Raider.IO'":""} onchange="bisToggle(${i})"></td><td><b>${E(x[0])}</b></td><td>${live}</td><td class="${owned?"good":""}">${E(x[1])}</td><td>${status}</td><td>${E(x[2])}</td><td>${E(x[3])}</td>`;$("bisTable").appendChild(tr)});let next=BIS_PRIORITY.find(i=>!(S.bis[i]||isAutoBis(i)));$("bisNext").innerHTML=next===undefined?`<div class="good" style="font-weight:900;font-size:18px">✓ Overall list complete</div>`:`<div class="nextKeyDungeon">${E(BIS[next][1])}</div><div class="recReason"><b>${E(BIS[next][0])}</b> • ${E(BIS[next][2])}<br>${E(BIS[next][3]||"Next unchecked BiS target")}</div>`;}
+function gearEdit(i,k,v){S.gear[i][k]=v;save()}function gearDel(i){S.gear.splice(i,1);save();render()}function addGear(){S.gear.push({i:"New item",n:"Upgrade note"});save();render()}
+function checkSave(){document.querySelectorAll("[data-c]").forEach(x=>S.checks[x.dataset.c]=x.checked);save()}
+function openRun(){$("runRating").value=S.rating;$("runModal").classList.add("open")}function closeM(id){$(id).classList.remove("open")}
+function saveRun(){let r={dungeon:$("runDungeon").value||"Mythic+",level:+$("runLevel").value||2,result:$("runResult").value,rating:+$("runRating").value||S.rating};S.runs.push(r);S.rating=r.rating;S.weekly++;save();closeM("runModal");render()}
+function openSettings(){$("charName").value=S.name;$("realm").value=S.realm;$("region").value=S.region||"us";$("currentRating").value=S.rating;$("spec").value=S.spec;$("settingsModal").classList.add("open")}
+function saveSettings(){S.name=$("charName").value||"Buttholwink";S.realm=$("realm").value||"Illidan";S.region=$("region").value||"us";S.rating=+$("currentRating").value||0;S.spec=$("spec").value||"Arms Warrior";$("rioProfileLink").href=`https://raider.io/characters/${encodeURIComponent(S.region)}/${encodeURIComponent(S.realm)}/${encodeURIComponent(S.name)}`;save();closeM("settingsModal");render();refreshRaiderIO(true)}
+
+
+/* ===== RAIDER.IO LIVE DATA ===== */
+const RIO_ENDPOINT="/api/raider";
+function rioName(){ return S.name; }
+function rioUrl(){
+  const fields=[
+    "gear",
+    "talents",
+    "mythic_plus_scores_by_season:current",
+    "mythic_plus_best_runs",
+    "mythic_plus_recent_runs",
+    "mythic_plus_ranks",
+    "mythic_plus_weekly_highest_level_runs"
+  ].join(",");
+  return `${RIO_ENDPOINT}?region=${encodeURIComponent(S.region||"us")}&realm=${encodeURIComponent(S.realm||"illidan")}&name=${encodeURIComponent(rioName())}&fields=${encodeURIComponent(fields)}`;
+}
+function setRioStatus(kind,text){
+  const el=$("rioStatus"); el.className="rioStatus"+(kind?" "+kind:"");
+  $("rioStatusText").textContent=text;
+}
+function shortRank(v){ if(v===null||v===undefined||!Number.isFinite(+v)) return "—"; return "#"+Number(v).toLocaleString(); }
+function runScore(r){ return +(r?.score ?? r?.score_adj ?? r?.mythic_plus_score ?? 0); }
+function runLevel(r){ return +(r?.mythic_level ?? r?.level ?? 0); }
+function runDungeon(r){ return r?.dungeon ?? r?.short_name ?? r?.dungeon_name ?? "Unknown Dungeon"; }
+function runTimed(r){ return (r?.num_keystone_upgrades ?? 0)>0 || r?.is_completed_within_time===true; }
+
+function makeBestNextKey(bestRuns){
+  if(!Array.isArray(bestRuns)||!bestRuns.length){
+    $("recDungeon").textContent="No best-run data returned";
+    $("recLevel").textContent="—";
+    $("recReason").textContent="Raider.IO synced, but it did not return dungeon best runs for this character/season.";
+    return;
+  }
+  // One contributing best run per dungeon is expected. If duplicates appear, keep the highest score.
+  const byDungeon={};
+  bestRuns.forEach(r=>{
+    const d=runDungeon(r), sc=runScore(r);
+    if(!byDungeon[d] || sc>runScore(byDungeon[d])) byDungeon[d]=r;
+  });
+  const runs=Object.values(byDungeon).sort((a,b)=>runScore(a)-runScore(b));
+  const weak=runs[0];
+  const lvl=runLevel(weak);
+  const target=Math.max(lvl+1,2);
+  $("recDungeon").textContent=runDungeon(weak);
+  $("recLevel").textContent="+"+target;
+  const timed=runTimed(weak);
+  $("recReason").textContent=
+    `Your lowest current best-run score is ${runScore(weak).toFixed(1)} in ${runDungeon(weak)} at +${lvl}. `+
+    `A +${target} there is the cleanest first score-upgrade target${timed?" once you can time it":"; timing it would also improve this slot"}. `+
+    `This is a priority recommendation, not a guaranteed score-gain estimate.`;
+}
+
+function syncDungeonTable(bestRuns){
+  if(!Array.isArray(bestRuns)||!bestRuns.length) return;
+  const rows={};
+  bestRuns.forEach(r=>{
+    const d=runDungeon(r), sc=runScore(r);
+    if(!rows[d] || sc>runScore(rows[d])) rows[d]=r;
+  });
+  const arr=Object.values(rows).sort((a,b)=>runScore(b)-runScore(a));
+  S.d=arr.map(r=>{
+    const lvl=runLevel(r), sc=Math.round(runScore(r)*10)/10;
+    return [runDungeon(r),lvl,sc,Math.max(lvl+1,S.keyGoal||lvl+1)];
+  });
+}
+function syncRecentRuns(recent){
+  if(!Array.isArray(recent)) return;
+  S.runs=recent.slice(0,12).map(r=>({
+    dungeon:runDungeon(r),
+    level:runLevel(r),
+    result:runTimed(r)?"Timed":"Depleted",
+    rating:S.rating,
+    score:runScore(r),
+    completed_at:r.completed_at||null
+  }));
+}
+function normalizeRioGearItems(gear){
+  const src=gear?.items||gear?.equipped_items||{};
+  const aliases={head:["head"],neck:["neck"],shoulder:["shoulder","shoulders"],back:["back","cloak"],chest:["chest"],wrist:["wrist","bracers"],hands:["hands","gloves"],waist:["waist","belt"],legs:["legs"],feet:["feet","boots"],finger1:["finger1","finger_1","ring1","ring_1"],finger2:["finger2","finger_2","ring2","ring_2"],trinket1:["trinket1","trinket_1"],trinket2:["trinket2","trinket_2"],mainhand:["mainhand","main_hand","mainHand"],offhand:["offhand","off_hand","offHand"]};
+  const out={};
+  for(const [dest,keys] of Object.entries(aliases)){for(const k of keys){if(src?.[k]){out[dest]=src[k];break}}}
+  return out;
+}
+function applyRio(data){
+  if(!data||data.error) throw new Error(data?.message||data?.error||"Raider.IO returned no profile.");
+  S.name=data.name||S.name; S.realm=data.realm||S.realm; S.spec=data.active_spec_name?`${data.active_spec_name} ${data.class||"Death Knight"}`:S.spec;
+  S.region=data.region||S.region||"us";
+  const scoreObj=data.mythic_plus_scores_by_season?.[0]?.scores;
+  const liveScore=+(scoreObj?.all ?? 0);
+  if(liveScore) S.rating=Math.round(liveScore*10)/10;
+  const gear=data.gear||{};
+  S.rio=S.rio||{};
+  S.rio.lastSync=new Date().toISOString();
+  S.rio.profileUrl=data.profile_url||$("rioProfileLink").href;
+  S.rio.ilvl=gear.item_level_equipped ?? gear.item_level ?? null;
+  S.rio.equipped=normalizeRioGearItems(gear);
+  S.rio.ranks=data.mythic_plus_ranks||{};
+  S.rio.rawScore=liveScore||null;
+  syncDungeonTable(data.mythic_plus_best_runs);
+  syncRecentRuns(data.mythic_plus_recent_runs);
+  makeBestNextKey(data.mythic_plus_best_runs);
+  save(); render(); renderRioMeta(); renderBis();
+}
+function renderRioMeta(){
+  const r=S.rio||{};
+  $("rioRating").textContent=S.rating?Number(S.rating).toLocaleString():"—";
+  $("rioIlvl").textContent=r.ilvl??"—";
+  const all=r.ranks?.overall||r.ranks?.class||{};
+  $("rioWorldRank").textContent=shortRank(all.world);
+  $("rioRegionRank").textContent=shortRank(all.region);
+  if(r.profileUrl) $("rioProfileLink").href=r.profileUrl;
+  if(r.lastSync){
+    const t=new Date(r.lastSync);
+    setRioStatus("live","Synced "+t.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}));
+  }
+  // Restore a recommendation from cached dungeon rows when opening offline.
+  if(S.d?.length && (!$("recLevel").textContent || $("recLevel").textContent==="—")){
+    const weak=S.d.slice().sort((a,b)=>(+a[2]||0)-(+b[2]||0))[0];
+    if(weak){
+      $("recDungeon").textContent=weak[0];
+      $("recLevel").textContent="+"+Math.max((+weak[1]||0)+1,2);
+      $("recReason").textContent=`Cached recommendation: ${weak[0]} is currently your lowest stored dungeon score (${weak[2]}). Refresh Raider.IO for the latest runs.`;
+    }
+  }
+}
+async function refreshRaiderIO(userInitiated=false){
+  const btn=$("rioRefresh"); btn.disabled=true; btn.textContent="↻ Syncing…"; setRioStatus("","Contacting Raider.IO…");
+  try{
+    const res=await fetch(rioUrl(),{headers:{"Accept":"application/json"},cache:"no-store"});
+    if(!res.ok){
+      const retry=res.headers.get("Retry-After");
+      if(res.status===429) throw new Error(`Rate limited by Raider.IO${retry?`; try again in ${retry}s`:""}.`);
+      throw new Error(`Raider.IO HTTP ${res.status}`);
+    }
+    const data=await res.json();
+    applyRio(data);
+    setRioStatus("live","Raider.IO live");
+  }catch(err){
+    console.error(err);
+    setRioStatus("err","Sync failed — using saved data");
+    $("recReason").textContent=(S.rio?.lastSync?"Using your last successful Raider.IO sync. ":"")+
+      `Live fetch failed: ${err.message}. You can retry with Refresh Raider.IO.`;
+  }finally{
+    btn.disabled=false; btn.textContent="↻ Refresh Raider.IO";
+  }
+}
+
+/* ===== ROTATION TRAINER =====
+   Priority modeled from current 12.1 guide concepts:
+   Deathbringer Breath:
+   ERW @2 charges > Colossus Smash > Pillar > Breath > Bladestorm >
+   KM spender (2 KM / Exterminate) > Rime HB > RP cap dump > KM spender >
+   ERW to generate KM > regular RP spender > rune spender > HB filler.
+*/
+const AB=[
+ {id:"erw",name:"Sweeping Strikes",ico:"⚡"},
+ {id:"mark",name:"Colossus Smash",ico:"☠️"},
+ {id:"pillar",name:"Pillar of Frost",ico:"🧊"},
+ {id:"breath",name:"Avatar",ico:"🐉"},
+ {id:"fury",name:"Bladestorm",ico:"🌨️"},
+ {id:"obl",name:"Mortal Strike",ico:"⚔️"},
+ {id:"scythe",name:"Cleave",ico:"🌙"},
+ {id:"hb",name:"Rend",ico:"❄️"},
+ {id:"fs",name:"Execute",ico:"🗡️"},
+ {id:"ga",name:"Overpower",ico:"🧊"}
+];
+let Q=null,locked=false;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function chance(p){return Math.random()<p}
+function makeScenario(){
+ let mode=$("mode").value,targets=mode==="Single Target"?1:mode==="2 Target Cleave"?2:mode==="3+ Target AoE"?rand(3,6):[1,1,2,3,4,5][rand(0,5)];
+ let q={
+  targets,runes:rand(1,6),rp:rand(15,100),km:chance(.62)?(chance(.25)?2:1):0,rime:chance(.45),exterminate:chance(.28),
+  erw:chance(.52)?(chance(.25)?2:1):0,
+  markReady:chance(.34),pillarReady:chance(.34),breathReady:chance(.28),furyReady:chance(.30),
+  breathActive:false
+ };
+ if(q.erw===2) q.runes=Math.min(q.runes,4);
+ return q
+}
+function available(q,id){
+ if(id==="erw")return q.erw>0;if(id==="mark")return q.markReady;if(id==="pillar")return q.pillarReady;if(id==="breath")return q.breathReady&&q.rp>=30;if(id==="fury")return q.furyReady;
+ if(id==="obl"||id==="scythe")return q.runes>=2;if(id==="hb")return q.runes>=1||q.rime;if(id==="fs"||id==="ga")return q.rp>=30;return true
+}
+function spender(q){return q.targets>=3?"ga":"fs"}
+function kmspender(q){return q.targets>=2?"scythe":"obl"}
+function choose(q){
+ let frostbane=$("build").value.includes("Frostbane");
+ if(q.erw>=2)return ["erw","Sweeping Strikes is highest priority at 2 charges so you do not waste recharge time."];
+ if(q.markReady)return ["mark","Deathbringer wants Colossus Smash used immediately when available to start the burst cycle."];
+ if(q.pillarReady)return ["pillar","Pillar of Frost is a short cooldown; use it aggressively instead of losing casts."];
+ if(!frostbane && q.breathReady && q.rp>=30)return ["breath","Avatar is available with enough Runic Power, so start the major damage window."];
+ if(q.furyReady)return ["fury","Bladestorm is available and sits high in the burst priority."];
+ let kms=kmspender(q);
+ if((q.km>=2 || (q.km>=1&&q.exterminate)) && available(q,kms))return [kms,q.targets>=2?"Spend the high-value Killing Machine state with Cleave for cleave/AoE.":"Spend the high-value Killing Machine state with Mortal Strike."];
+ if(frostbane && q.rime && available(q,"hb"))return ["hb","In the Frostbane variant, the Frostbane/Rime interaction is prioritized before the normal Rime spend."];
+ if(q.rime && available(q,"hb"))return ["hb","Spend Rime with Rend before lower-priority resource fillers."];
+ let sp=spender(q);
+ if(q.rp>=85 && available(q,sp))return [sp,q.targets>=3?"Runic Power is near cap: dump with Overpower in 3+ targets.":"Runic Power is near cap: dump with Execute before wasting generation."];
+ if(q.km>=1 && available(q,kms))return [kms,q.targets>=2?"Spend Killing Machine with Cleave in cleave/AoE.":"Spend Killing Machine with Mortal Strike."];
+ if(q.erw>=1 && q.km===0 && q.runes<=3)return ["erw","With no Killing Machine and low rune pressure, Sweeping Strikes is the best way to generate momentum and KM."];
+ if(available(q,sp))return [sp,q.targets>=3?"Use Overpower as the regular Runic Power spender at 3+ targets.":"Use Execute as the regular Runic Power spender."];
+ if(available(q,kms))return [kms,q.targets>=2?"No higher proc/cooldown is available: spend runes with Cleave.":"No higher proc/cooldown is available: spend runes with Mortal Strike."];
+ return ["hb","Resources are dry; Rend is the remaining filler."];
+}
+function nextScenario(){
+ Q=makeScenario();locked=false;paintScenario()
+}
+function resetScenario(){nextScenario();paintPriority()}
+function paintScenario(){
+ $("targets").textContent=Q.targets;$("runes").textContent=Q.runes;$("rp").textContent=Q.rp;$("km").textContent=Q.km;$("rime").textContent=Q.rime?"Yes":"No";$("erw").textContent=Q.erw;
+ $("enemy").textContent=Q.targets===1?"Boss / Priority Target":Q.targets===2?"2-Target Cleave":"Mythic+ Trash Pack";
+ $("scen").textContent=`${Q.targets} target${Q.targets>1?"s":""} • choose the highest-DPS next global`;
+ $("procs").innerHTML="";
+ if(Q.km){let x=document.createElement("span");x.className="proc km";x.textContent=`Killing Machine ×${Q.km}`;$("procs").appendChild(x)}
+ if(Q.rime){let x=document.createElement("span");x.className="proc rime";x.textContent="Rime";$("procs").appendChild(x)}
+ if(Q.exterminate){let x=document.createElement("span");x.className="proc ex";x.textContent="Exterminate";$("procs").appendChild(x)}
+ [["markReady","Colossus Smash ready"],["pillarReady","Pillar ready"],["breathReady","Breath ready"],["furyReady","Frostwyrm ready"]].forEach(([k,t])=>{if(Q[k]){let x=document.createElement("span");x.className="proc";x.textContent=t;$("procs").appendChild(x)}})
+ let ans=choose(Q)[0];$("abilities").innerHTML="";
+ AB.forEach((a,i)=>{let b=document.createElement("button");b.className="ability"+(!available(Q,a.id)?" cooldown":"")+($("difficulty").value==="Learning"&&a.id===ans?" recommended":"");b.disabled=!available(Q,a.id);b.onclick=()=>answer(a.id);b.innerHTML=`<span class="key">${i===9?0:i+1}</span><span class="ico">${a.ico}</span>${a.name}`;$("abilities").appendChild(b)});
+ $("fb").className="feedback";$("fb").innerHTML=`<b>What do you press?</b><br><span class="scenario">${$("difficulty").value==="Expert"?"No hint. Trust the priority.":"Read cooldowns, procs, target count and resources."}</span>`;
+}
+function answer(id){
+ if(locked)return;locked=true;let [right,why]=choose(Q),ok=id===right;S.trainer.total++;
+ if(ok){S.trainer.correct++;S.trainer.streak++;S.trainer.score+=100+Math.min(100,S.trainer.streak*10);S.trainer.best=Math.max(S.trainer.best,S.trainer.streak);$("fb").className="feedback correct";$("fb").innerHTML=`<b>✓ Correct — ${AB.find(a=>a.id===right).name}</b><br><span class="scenario">${why}</span>`}
+ else{S.trainer.streak=0;let picked=AB.find(a=>a.id===id)?.name||id,correct=AB.find(a=>a.id===right)?.name||right;$("fb").className="feedback wrong";$("fb").innerHTML=`<b>✕ ${picked} was lower priority. Best: ${correct}</b><br><span class="scenario">${why}</span>`}
+ save();renderTrainerStats();setTimeout(nextScenario,$("difficulty").value==="Expert"?700:1300)
+}
+function renderTrainerStats(){let t=S.trainer;$("score").textContent=t.score;$("streak").textContent=t.streak;$("best").textContent=t.best;$("acc").textContent=t.total?Math.round(t.correct/t.total*100)+"%":"—"}
+function resetTrainer(){S.trainer={score:0,streak:0,best:0,correct:0,total:0};save();renderTrainerStats();nextScenario()}
+function paintPriority(){
+ let frostbane=$("build").value.includes("Frostbane");
+ let p=["Sweeping Strikes at 2 charges","Colossus Smash","Pillar of Frost",frostbane?"Frostbane burst setup":"Avatar","Bladestorm","2 KM / Exterminate → KM spender",frostbane?"Frostbane before Rime":"Rime → Rend","Dump Runic Power before cap","1 KM → KM spender","Sweeping Strikes to generate KM","Normal RP spender","Rune spender / filler"];
+ $("priority").innerHTML=p.map(x=>`<div>${x}</div>`).join("")
+}
+document.addEventListener("keydown",e=>{if(!$("train").classList.contains("active"))return;let n=e.key==="0"?9:parseInt(e.key)-1;if(n>=0&&n<AB.length){let a=AB[n];if(Q&&available(Q,a.id))answer(a.id)}})
+render();renderFarm();
+setTimeout(()=>{
+  const last=S.rio?.lastSync?Date.now()-new Date(S.rio.lastSync).getTime():Infinity;
+  if(last>10*60*1000) refreshRaiderIO(false);
+},350);
+</script>
+</body>
+</html>
