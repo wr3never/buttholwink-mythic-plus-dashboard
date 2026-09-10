@@ -499,18 +499,11 @@ function saveSettings(){S.name=$("charName").value||"Buttholwink";S.realm=$("rea
 
 /* ===== RAIDER.IO LIVE DATA ===== */
 const RIO_ENDPOINT="/api/raider";
-function rioName(){ return S.name; }
+function rioName(){ return "Buttholwink"; }
 function rioUrl(){
-  const fields=[
-    "gear",
-    "talents",
-    "mythic_plus_scores_by_season:current",
-    "mythic_plus_best_runs",
-    "mythic_plus_recent_runs",
-    "mythic_plus_ranks",
-    "mythic_plus_weekly_highest_level_runs"
-  ].join(",");
-  return `${RIO_ENDPOINT}?region=${encodeURIComponent(S.region||"us")}&realm=${encodeURIComponent(S.realm||"illidan")}&name=${encodeURIComponent(rioName())}&fields=${encodeURIComponent(fields)}`;
+  // This app is dedicated to Yaden's character, so do not let stale localStorage
+  // accidentally request Wr3n/Yaden instead of the actual Raider.IO character.
+  return `${RIO_ENDPOINT}?region=us&realm=illidan&name=${encodeURIComponent("Buttholwink")}`;
 }
 function setRioStatus(kind,text){
   const el=$("rioStatus"); el.className="rioStatus"+(kind?" "+kind:"");
@@ -628,7 +621,12 @@ async function refreshRaiderIO(userInitiated=false){
     if(!res.ok){
       const retry=res.headers.get("Retry-After");
       if(res.status===429) throw new Error(`Rate limited by Raider.IO${retry?`; try again in ${retry}s`:""}.`);
-      throw new Error(`Raider.IO HTTP ${res.status}`);
+      let detail="";
+      try{
+        const errBody=await res.clone().json();
+        detail=errBody?.message||errBody?.error||"";
+      }catch(_){}
+      throw new Error(`Raider.IO HTTP ${res.status}${detail?`: ${detail}`:""}`);
     }
     const data=await res.json();
     applyRio(data);
