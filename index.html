@@ -459,15 +459,15 @@ a{color:#b98cec}
 </div><div style="display:flex;gap:7px;justify-content:flex-end;margin-top:12px"><button class="btn" onclick="closeM('settingsModal')">Cancel</button><button class="btn primary" onclick="saveSettings()">Save</button></div></div></div>
 
 <script>
-const D={name:"Buttholwink",realm:"Illidan",region:"us",spec:"Arms Warrior",rating:2065,goal:2500,keyGoal:12,weekly:0,
+const D={name:"Buttholwink",realm:"Illidan",region:"us",spec:"Arms Warrior",rating:0,goal:2500,keyGoal:12,weekly:0,
  d:[["Dungeon 1",10,260,12],["Dungeon 2",10,260,12],["Dungeon 3",9,245,11],["Dungeon 4",9,245,11],["Dungeon 5",8,230,10],["Dungeon 6",8,230,10],["Dungeon 7",10,260,12],["Dungeon 8",9,245,11]],
  runs:[],gear:[{i:"Weapon",n:"Highest-impact slot"},{i:"Trinket",n:"Compare before replacing"},{i:"Tier / Set",n:"Protect set bonus"}],checks:{},trainer:{score:0,streak:0,best:0,correct:0,total:0}};
-let S=JSON.parse(localStorage.getItem("wr3nFrostDash")||"null")||D;
+let S=JSON.parse(localStorage.getItem("yadenArmsDash")||"null")||D;
 if(!S.trainer)S.trainer={score:0,streak:0,best:0,correct:0,total:0};if(!S.bis)S.bis={};
 const $=id=>document.getElementById(id);
 const E=x=>String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-function save(){localStorage.setItem("wr3nFrostDash",JSON.stringify(S))}
-function tab(id,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");b.classList.add("active");if(id==="train")nextScenario();if(id==="bis")renderBis();if(id==="farm")renderFarm()}
+function save(){localStorage.setItem("yadenArmsDash",JSON.stringify(S))}
+function tab(id,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");b.classList.add("active");if(id==="bis")renderBis();if(id==="farm")renderFarm()}
 function render(){
  $("nm").textContent=S.name;$("sub").textContent=`${S.realm} • ${S.spec} • Midnight Season 2`;$("ratingVal").textContent=S.rating;$("goalVal").textContent=S.goal;$("weeklyVal").textContent=S.weekly;
  let gap=Math.max(0,S.goal-S.rating),pct=Math.min(100,S.rating/S.goal*100);$("prog").style.width=pct+"%";$("pct").textContent=`${pct.toFixed(1)}% to ${S.goal}`;$("gap").textContent=gap?`${gap} rating to go`:"Goal reached";
@@ -574,23 +574,35 @@ function normalizeRioGearItems(gear){
 }
 function applyRio(data){
   if(!data||data.error) throw new Error(data?.message||data?.error||"Raider.IO returned no profile.");
-  S.name=data.name||S.name; S.realm=data.realm||S.realm; S.spec=data.active_spec_name?`${data.active_spec_name} ${data.class||"Death Knight"}`:S.spec;
-  S.region=data.region||S.region||"us";
+  S.name=data.name||"Buttholwink";
+  S.realm=data.realm||"Illidan";
+  S.spec=data.active_spec_name?`${data.active_spec_name} ${data.class||"Warrior"}`:"Arms Warrior";
+  S.region=data.region||"us";
+
   const scoreObj=data.mythic_plus_scores_by_season?.[0]?.scores;
-  const liveScore=+(scoreObj?.all ?? 0);
-  if(liveScore) S.rating=Math.round(liveScore*10)/10;
+  const liveScore=Number(scoreObj?.all ?? 0);
+  if(Number.isFinite(liveScore)) S.rating=Math.round(liveScore*10)/10;
+
   const gear=data.gear||{};
   S.rio=S.rio||{};
   S.rio.lastSync=new Date().toISOString();
-  S.rio.profileUrl=data.profile_url||$("rioProfileLink").href;
+  S.rio.profileUrl=data.profile_url||"https://raider.io/characters/us/illidan/Buttholwink";
   S.rio.ilvl=gear.item_level_equipped ?? gear.item_level ?? null;
   S.rio.equipped=normalizeRioGearItems(gear);
   S.rio.ranks=data.mythic_plus_ranks||{};
-  S.rio.rawScore=liveScore||null;
+  S.rio.rawScore=Number.isFinite(liveScore)?liveScore:null;
+
   syncDungeonTable(data.mythic_plus_best_runs);
   syncRecentRuns(data.mythic_plus_recent_runs);
-  makeBestNextKey(data.mythic_plus_best_runs);
-  save(); render(); renderRioMeta(); renderBis();
+
+  // Persist the successful API sync first. UI rendering errors should never
+  // be reported as a Raider.IO fetch failure.
+  save();
+
+  try{ makeBestNextKey(data.mythic_plus_best_runs); }catch(e){ console.warn("Recommendation render:",e); }
+  try{ render(); }catch(e){ console.warn("Dashboard render:",e); }
+  try{ renderRioMeta(); }catch(e){ console.warn("Raider meta render:",e); }
+  try{ renderBis(); }catch(e){ console.warn("BiS render:",e); }
 }
 function renderRioMeta(){
   const r=S.rio||{};
@@ -633,7 +645,7 @@ async function refreshRaiderIO(userInitiated=false){
     setRioStatus("live","Raider.IO live");
   }catch(err){
     console.error(err);
-    setRioStatus("err","Sync failed — using saved data");
+    setRioStatus("err",`Sync failed: ${err.message}`);
     $("recReason").textContent=(S.rio?.lastSync?"Using your last successful Raider.IO sync. ":"")+
       `Live fetch failed: ${err.message}. You can retry with Refresh Raider.IO.`;
   }finally{
@@ -723,7 +735,15 @@ function answer(id){
  else{S.trainer.streak=0;let picked=AB.find(a=>a.id===id)?.name||id,correct=AB.find(a=>a.id===right)?.name||right;$("fb").className="feedback wrong";$("fb").innerHTML=`<b>✕ ${picked} was lower priority. Best: ${correct}</b><br><span class="scenario">${why}</span>`}
  save();renderTrainerStats();setTimeout(nextScenario,$("difficulty").value==="Expert"?700:1300)
 }
-function renderTrainerStats(){let t=S.trainer;$("score").textContent=t.score;$("streak").textContent=t.streak;$("best").textContent=t.best;$("acc").textContent=t.total?Math.round(t.correct/t.total*100)+"%":"—"}
+function renderTrainerStats(){
+  const score=$("score"),streak=$("streak"),best=$("best"),acc=$("acc");
+  if(!score||!streak||!best||!acc) return;
+  let t=S.trainer||{score:0,streak:0,best:0,correct:0,total:0};
+  score.textContent=t.score;
+  streak.textContent=t.streak;
+  best.textContent=t.best;
+  acc.textContent=t.total?Math.round(t.correct/t.total*100)+"%":"—";
+}
 function resetTrainer(){S.trainer={score:0,streak:0,best:0,correct:0,total:0};save();renderTrainerStats();nextScenario()}
 function paintPriority(){
  let frostbane=$("build").value.includes("Frostbane");
