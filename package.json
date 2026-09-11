@@ -1,6 +1,6 @@
 {
-  "name": "yaden-mythic-plus-dashboard",
-  "version": "1.2.0",
+  "name": "yaden-arms-mythic-plus-dashboard",
+  "version": "1.3.0",
   "private": true,
   "engines": {
     "node": "22.x"
