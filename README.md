@@ -17,3 +17,10 @@ Raider.IO sync repaired: successful API data is saved before UI rendering, and s
 - Replaced copied Frost DK BiS/farm data with Arms Warrior Midnight Season 2 targets.
 - Added Arms-specific M+ farm recommendations.
 - Restored a working interactive Slayer rotation trainer with ST, 2-target, 3+ target, learning/normal/expert modes, scoring, streaks and keyboard 1-0 controls.
+
+## v1.4 — BiS difficulty routes
+- Adds exact raid difficulty / M+ Vault / crafting route information to every Arms Warrior BiS target.
+- Coiled Altar and Ula'tek true-BiS raid targets call out Mythic 344.
+- M+ ring targets call out +10+ Great Vault route (318 Myth 1/6, upgradeable to 334).
+- Crafted bracers/boots call out Myth Mistcrest recrafting and 331 craft cap.
+- Rotation trainer logic is unchanged from v1.3.
